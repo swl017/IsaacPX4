@@ -1,0 +1,74 @@
+session_name: isaac_px4
+
+environment:
+  ROS1_INSTALL_PATH: /opt/ros/noetic
+  ROS2_INSTALL_PATH: /opt/ros/galactic
+  YOLO_INSTALL_PATH: ${HOME}/colcon_ws/install # galactic
+  ROS_BRIDGE_INSTALL_PATH: ${HOME}/ros1_bridge_ws/install # galactic
+  ROS2_HUMBLE_INSTALL_PATH: ${HOME}/ros2_humble/install # humble
+  ROS2_PX4_INSTALL_PATH: ${HOME}/IsaacPX4/ros2_ws/install # humble
+  ISAAC_PX4_HOME: ${HOME}/IsaacPX4
+  ROS_PARAMETER_EVENT_HANDLER__USE_SIM_TIME: "true" # Use simulation time
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: simulator
+  focus: true
+  layout: tiled
+  shell_command_before:
+    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+  panes:
+    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; #cd /home/usrg/IsaacPX4/IsaacLab/workspace/triangulation/robust_tracking;- ISAACLAB_PYTHON train.py --task DroneEnv-v0 --num_env 1
+
+- window_name: ros2
+  focus: false
+  layout: tiled
+  shell_command_before:
+    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+  panes:
+    #- cd ${ISAAC_PX4_HOME}; ./QGroundControl.AppImage
+    - sh ${ISAAC_PX4_HOME}/env/start_uxrce.sh
+    - sleep 3; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch gimbal_stabilizer multi_agent_gimbal.launch.py
+    - sleep 3; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch offboard_py offboard.launch.py
+    # - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14540@ -r __ns:=/px4_1
+    # - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14540@ -r __ns:=/px4_2
+    - sleep 3; source ${YOLO_INSTALL_PATH}/setup.bash; ros2 launch ultralytics_ros tracker_drone.launch.xml ns:=/px4_1
+    - sleep 3; source ${YOLO_INSTALL_PATH}/setup.bash; ros2 launch ultralytics_ros tracker_drone.launch.xml ns:=/px4_2
+    #- sleep 3; source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run rqt_image_view rqt_image_view
+
+- window_name: ros_bridge
+  focus: false
+  layout: tiled
+  shell_command_before:
+    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+  panes:
+    - source ${ROS1_INSTALL_PATH}/setup.bash; roscore
+    - sleep 2; cd ${ISAAC_PX4_HOME}/tmux; source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; rosparam load bridge.yaml; source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge parameter_bridge
+    - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_1
+    - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_2
+
+- window_name: ros1
+  focus: false
+  layout: tiled
+  shell_command_before:
+    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+    - source ${ROS1_INSTALL_PATH}/setup.bash
+    - source ${HOME}/catkin_ws/devel/setup.bash
+  panes:
+    - sleep 2; rosparam set /use_sim_time ${ROS_PARAMETER_EVENT_HANDLER__USE_SIM_TIME}
+    - sleep 4; roslaunch multi_agent_manager coordinate_manager.launch
+    - |
+      sleep 8
+      rosservice call /coordinate_manager/set_reference "latitude: 38.73685003
+      longitude: -9.1379537 
+      altitude: 90.0 
+      heading_deg: 0.0"
+    - sleep 4; roslaunch tracking_guidance multi_view_localization.launch 
+    #- sleep 4; rviz -d $(rospack find tracking_guidance)/rviz/multiview.rviz
+    

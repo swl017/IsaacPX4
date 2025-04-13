@@ -1,0 +1,12 @@
+[submodule "ros2_ws/src/gimbal_stabilizer"]
+	path = ros2_ws/src/gimbal_stabilizer
+	url = git@github.com:swl017/gimbal_stabilizer.git
+[submodule "ros2_ws/src/offboard_py"]
+	path = ros2_ws/src/offboard_py
+	url = git@github.com:swl017/offboard_py.git
+[submodule "ros2_ws/src/px4_msgs"]
+	path = ros2_ws/src/px4_msgs
+	url = https://github.com/PX4/px4_msgs.git
+[submodule "PegasusSimulator"]
+	path = PegasusSimulator
+	url = git@github.com:swl017/PegasusSimulator.git

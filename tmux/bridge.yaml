@@ -1,0 +1,195 @@
+# https://docs.ros.org/en/galactic/Concepts/About-Quality-of-Service-Settings.html
+topics:
+  -
+    topic: /px4_1/yolo_result_vision
+    type: vision_msgs/msg/Detecion2DArray # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/camera/color/camera_info
+    type: sensor_msgs/msg/CameraInfo # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/mavros/local_position/odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/local_odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/mavros/global_position/global
+    type: sensor_msgs/msg/NavSatFix # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/mavros/imu/data
+    type: sensor_msgs/msg/Imu # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_1/gimbal_rpy_rad
+    type: geometry_msgs/msg/Vector3 # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+
+  -
+    topic: /px4_2/yolo_result_vision
+    type: vision_msgs/msg/Detecion2DArray # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/camera/color/camera_info
+    type: sensor_msgs/msg/CameraInfo # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/mavros/local_position/odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/local_odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/mavros/global_position/global
+    type: sensor_msgs/msg/NavSatFix # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/mavros/imu/data
+    type: sensor_msgs/msg/Imu # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+
+  -
+    topic: /px4_3/mavros/local_position/odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_3/mavros/global_position/global
+    type: sensor_msgs/msg/NavSatFix # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_3/mavros/imu/data
+    type: sensor_msgs/msg/Imu # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /px4_2/gimbal_rpy_rad
+    type: geometry_msgs/msg/Vector3 # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+
+  -
+    topic: /px4_3/local_odom
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+
+  -
+    topic: /target/odom/triangulation
+    type: nav_msgs/msg/Odometry # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /target_markers
+    type: visualization_msgs/msg/MarkerArray # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
+  -
+    topic: /clock
+    type: rosgraph_msgs/msg/Clock # ros2 style
+    queue_size: 1
+    qos:
+      history: keep_last
+      depth: 10
+      reliability: best_effort
+      durability: volatile
