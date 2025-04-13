@@ -10,3 +10,9 @@
 [submodule "PegasusSimulator"]
 	path = PegasusSimulator
 	url = git@github.com:swl017/PegasusSimulator.git
+[submodule "IsaacLab"]
+	path = IsaacLab
+	url = git@github.com:swl017/IsaacLab.git
+[submodule "PX4-Autopilot"]
+	path = PX4-Autopilot
+	url = git@github.com:swl017/PX4-Autopilot
