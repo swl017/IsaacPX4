@@ -21,8 +21,8 @@ windows:
     - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
     # - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
   panes:
-    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/px4_multi_world.isaac.py
-    - sh ${ISAAC_PX4_HOME}/env/start_uxrce.sh
+    # - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/px4_multi_world.isaac.py
+    # - sh ${ISAAC_PX4_HOME}/env/start_uxrce.sh
     - cd ${ISAAC_PX4_HOME}; ./QGroundControl.AppImage
 
 - window_name: ros2
@@ -33,43 +33,48 @@ windows:
     # - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
   panes:
     - sleep 3; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch gimbal_stabilizer multi_agent_gimbal.launch.py
-    - sleep 3; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch offboard_py offboard.launch.py
-    # - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14540@ -r __ns:=/px4_1
-    # - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14540@ -r __ns:=/px4_2
+    # - sleep 3; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch offboard_py offboard.launch.py
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14541@localhost:14551 --param tgt_system:=2 -r __ns:=/px4_1/mavros
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14542@localhost:14552 --param tgt_system:=3 -r __ns:=/px4_2/mavros
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14543@localhost:14553 --param tgt_system:=4 -r __ns:=/px4_3/mavros
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14544@localhost:14554 --param tgt_system:=5 -r __ns:=/px4_4/mavros
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14545@localhost:14555 --param tgt_system:=6 -r __ns:=/px4_5/mavros
+    - source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run mavros mavros_node --ros-args --param fcu_url:=udp://:14546@localhost:14556 --param tgt_system:=7 -r __ns:=/px4_6/mavros
     - sleep 3; source ${YOLO_INSTALL_PATH}/setup.bash; ros2 launch ultralytics_ros tracker_drone.launch.xml ns:=/px4_1
     - sleep 3; source ${YOLO_INSTALL_PATH}/setup.bash; ros2 launch ultralytics_ros tracker_drone.launch.xml ns:=/px4_2
     - sleep 3; source ${YOLO_INSTALL_PATH}/setup.bash; ros2 launch ultralytics_ros tracker_drone.launch.xml ns:=/px4_3
     - sleep 3; source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run rqt_image_view rqt_image_view
+    - sleep 3; source ${ROS2_INSTALL_PATH}/setup.bash; rviz2 -d /home/usrg/mas/rviz2/multiview.rviz
 
-- window_name: ros_bridge
-  focus: false
-  layout: tiled
-  shell_command_before:
-    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
-    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
-  panes:
-    - source ${ROS1_INSTALL_PATH}/setup.bash; roscore
-    - sleep 2; cd ${ISAAC_PX4_HOME}/tmux; source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; rosparam load bridge.yaml; source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge parameter_bridge
-    - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_1
-    - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_2
+# - window_name: ros_bridge
+#   focus: false
+#   layout: tiled
+#   shell_command_before:
+#     - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+#     - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+#   panes:
+#     - source ${ROS1_INSTALL_PATH}/setup.bash; roscore
+#     - sleep 2; cd ${ISAAC_PX4_HOME}/tmux; source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; rosparam load bridge.yaml; source ${ROS2_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge parameter_bridge
+#     - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_1
+#     - source ${ROS_BRIDGE_INSTALL_PATH}/setup.bash; ros2 run ros1_bridge detection_2d_array_bridge_px4_2
 
-- window_name: ros1
-  focus: false
-  layout: tiled
-  shell_command_before:
-    - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
-    - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
-    - source ${ROS1_INSTALL_PATH}/setup.bash
-    - source ${HOME}/catkin_ws/devel/setup.bash
-  panes:
-    - sleep 2; rosparam set /use_sim_time ${ROS_PARAMETER_EVENT_HANDLER__USE_SIM_TIME}
-    - sleep 4; roslaunch multi_agent_manager coordinate_manager.launch
-    - |
-      sleep 8
-      rosservice call /coordinate_manager/set_reference "latitude: 38.73685003
-      longitude: -9.1379537 
-      altitude: 90.0 
-      heading_deg: 0.0"
-    - sleep 4; roslaunch tracking_guidance multi_view_localization.launch 
-    - sleep 4; rviz -d $(rospack find tracking_guidance)/rviz/multiview.rviz
+# - window_name: ros1
+#   focus: false
+#   layout: tiled
+#   shell_command_before:
+#     - export DATE=$(date "+%Y-%m-%d_%H-%M-%S"); echo "DATE=$DATE"
+#     - source ${ISAAC_PX4_HOME}/env/isaac_px4.sh
+#     - source ${ROS1_INSTALL_PATH}/setup.bash
+#     - source ${HOME}/catkin_ws/devel/setup.bash
+#   panes:
+#     - sleep 2; rosparam set /use_sim_time ${ROS_PARAMETER_EVENT_HANDLER__USE_SIM_TIME}
+#     - sleep 4; roslaunch multi_agent_manager coordinate_manager.launch
+#     - |
+#       sleep 8
+#       rosservice call /coordinate_manager/set_reference "latitude: 38.73685003
+#       longitude: -9.1379537 
+#       altitude: 90.0 
+#       heading_deg: 0.0"
+#     - sleep 4; roslaunch tracking_guidance multi_view_localization.launch 
+#     - sleep 4; rviz -d $(rospack find tracking_guidance)/rviz/multiview.rviz
     
