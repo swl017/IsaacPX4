@@ -1,18 +1,18 @@
 [submodule "ros2_ws/src/gimbal_stabilizer"]
 	path = ros2_ws/src/gimbal_stabilizer
-	url = git@github.com:swl017/gimbal_stabilizer.git
+	url = git@github.com:usrg-drone/gimbal_stabilizer.git
 [submodule "ros2_ws/src/offboard_py"]
 	path = ros2_ws/src/offboard_py
-	url = git@github.com:swl017/offboard_py.git
+	url = git@github.com:usrg-drone/offboard_py.git
 [submodule "ros2_ws/src/px4_msgs"]
 	path = ros2_ws/src/px4_msgs
 	url = https://github.com/PX4/px4_msgs.git
 [submodule "PegasusSimulator"]
 	path = PegasusSimulator
-	url = git@github.com:swl017/PegasusSimulator.git
+	url = git@github.com:usrg-drone/PegasusSimulator.git
 [submodule "IsaacLab"]
 	path = IsaacLab
-	url = git@github.com:swl017/IsaacLab.git
+	url = git@github.com:usrg-drone/IsaacLab.git
 [submodule "PX4-Autopilot"]
 	path = PX4-Autopilot
-	url = git@github.com:swl017/PX4-Autopilot
+	url = git@github.com:usrg-drone/PX4-Autopilot.git
