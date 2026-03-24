@@ -1,0 +1,30 @@
+session_name: isaac_sim
+
+environment:
+  ROS2_HUMBLE_INSTALL_PATH: ${HOME}/ros2_humble/install # humble
+  ROS2_PX4_INSTALL_PATH: ${HOME}/IsaacPX4/ros2_ws/install # humble
+  ISAAC_PX4_HOME: ${HOME}/IsaacPX4
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: simulator
+  focus: true
+  layout: tiled
+  panes:
+    # Isaac Sim + PegasusSimulator (auto-launches PX4 SITL instances)
+    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/PegasusSimulator/launch/px4_multi_world_iris_gimbal3.isaac.py
+
+- window_name: ros2
+  focus: false
+  layout: tiled
+  panes:
+    # Gimbal stabilizer — simulates the real gimbal's onboard controller
+    - sleep 5; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch gimbal_stabilizer multi_agent_los_rate.launch.py
+
+- window_name: util
+  focus: false
+  layout: tiled
+  panes:
+    - cd ${ISAAC_PX4_HOME}; ./QGroundControl.AppImage
