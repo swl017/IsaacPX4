@@ -1,0 +1,43 @@
+session_name: isaac_sysid
+
+# Launch alongside isaac_sim.tmuxp.yaml (PegasusSimulator + PX4 SITL + gimbal stabilizer).
+# This session provides MAVROS bridge + sysid test node for px4_1.
+#
+# MAVROS config matches the working MAS pattern (simdrone1.tmuxp.yaml):
+#   - No use_sim_time on MAVROS (wall-clock heartbeat to PX4 — avoids offboard timeout)
+#   - Inline params (no params file)
+#   - Explicit MAVLink message intervals for telemetry
+#
+# Usage:
+#   tmuxp load tmux/isaac_sim.tmuxp.yaml    # first — starts simulator
+#   tmuxp load tmux/isaac_sysid.tmuxp.yaml  # second — starts MAVROS + sysid
+
+environment:
+  ROS2_HUMBLE_INSTALL_PATH: ${HOME}/ros2_humble/install
+  ROS2_PX4_INSTALL_PATH: ${HOME}/IsaacPX4/ros2_ws/install
+  ISAAC_PX4_HOME: ${HOME}/IsaacPX4
+  ROBOT_NAME: px4_1
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: mavros
+  focus: false
+  layout: tiled
+  shell_command_before:
+    - source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash && source ${ROS2_PX4_INSTALL_PATH}/setup.bash
+  panes:
+    # MAVROS bridge for px4_1 — inline params matching MAS pattern (no use_sim_time)
+    - ros2 run mavros mavros_node --ros-args -p fcu_url:=udp://:14541@localhost:14551 -p tgt_system:=2 -p local_position.tf.frame_id:=${ROBOT_NAME}/map -p local_position.tf.child_frame_id:=${ROBOT_NAME}/base_link -p global_position.frame_id:=${ROBOT_NAME}/map -p global_position.child_frame_id:=${ROBOT_NAME}/base_link -r __ns:=/${ROBOT_NAME}/mavros
+    # Set MAVLink message intervals (ATTITUDE 250Hz, LOCAL_POS 100Hz, GLOBAL_POS 50Hz, HIGHRES_IMU 250Hz, RAW_IMU 250Hz, ATTITUDE_TARGET 250Hz)
+    - 'sleep 2 && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 31, message_rate: 250.0}" && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 32, message_rate: 100.0}" && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 33, message_rate: 50.0}" && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 105, message_rate: 250.0}" && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 27, message_rate: 250.0}" && ros2 service call /${ROBOT_NAME}/mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 83, message_rate: 250.0}"'
+
+- window_name: sysid
+  focus: true
+  layout: tiled
+  shell_command_before:
+    - source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash && source ${ROS2_PX4_INSTALL_PATH}/setup.bash
+  panes:
+    # Sysid test node — subscribes to /clock directly for 100 Hz sim-time state machine
+    - ros2 run offboard_py sysid_node --ros-args -p vehicle_ns:=${ROBOT_NAME} -p output_dir:=${ISAAC_PX4_HOME}/sysid_output
