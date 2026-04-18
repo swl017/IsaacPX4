@@ -14,7 +14,7 @@ windows:
   layout: tiled
   panes:
     # Isaac Sim + PegasusSimulator (auto-launches PX4 SITL instances)
-    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/PegasusSimulator/launch/px4_multi_world_iris_gimbal3.isaac.py
+    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/PegasusSimulator/launch/px4_multi_world_iris_gimbal3.isaac.py --headless
 
 - window_name: ros2
   focus: false
