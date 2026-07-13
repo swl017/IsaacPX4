@@ -31,6 +31,14 @@ if ! docker image inspect isaacpx4-simstack >/dev/null 2>&1; then
     exit 1
 fi
 
+# --- Isaac Sim cache dirs (persist shader/asset compilation on the host) -----
+# Pre-create so they're owned by you, not root-created by Docker. The container
+# writes root-owned files inside; the kit/cache dir is the shader/PSO cache that
+# makes the slow first launch a one-time cost. Must match docker-compose.yaml.
+ISAAC_CACHE="${HOME}/docker/isaac-sim"
+mkdir -p "$ISAAC_CACHE"/cache/{kit,ov,pip,glcache,computecache} \
+         "$ISAAC_CACHE"/{logs,data,documents}
+
 # --- X11 authorization ------------------------------------------------------
 if [[ -z "${DISPLAY:-}" ]]; then
     echo "[run-simstack] WARNING: \$DISPLAY is empty — the GUI viewport won't show."

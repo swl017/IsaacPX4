@@ -1,0 +1,44 @@
+# ===========================================================================
+#  Build-context allowlist for the IsaacPX4 sim-stack image (Dockerfile).
+#
+#  The build context is this repo root (~130 GB). Docker ships the whole
+#  context to the daemon BEFORE reading any COPY line, so we IGNORE EVERYTHING
+#  and then re-include only the folders the Dockerfile actually COPYs -- and
+#  trim the giant non-source blobs out of even those.
+#
+#  Net context after this file: a few GB, not 130 GB.
+# ===========================================================================
+
+# 1) Ignore everything by default.
+*
+
+# 2) PegasusSimulator (local fork) -> installed as an Isaac Sim extension.
+!PegasusSimulator
+#    ...but NOT the 29 GB Isaac assets zip, the 189 MB git history, or built docs.
+PegasusSimulator/*.zip
+PegasusSimulator/.git
+PegasusSimulator/docs
+
+# 3) PX4-Autopilot (local fork) -> SITL is COMPILED in a builder stage.
+#    Keep the source + .git (PX4's build reads git for versioning/submodules);
+#    drop the host's prebuilt Ubuntu-20.04 objects (we rebuild for 22.04).
+!PX4-Autopilot
+PX4-Autopilot/build
+
+# 4) Out of ros2_ws, only the gimbal_stabilizer package (nested-allowlist ladder).
+!ros2_ws
+ros2_ws/*
+!ros2_ws/src
+ros2_ws/src/*
+!ros2_ws/src/gimbal_stabilizer
+ros2_ws/src/gimbal_stabilizer/.git
+
+# 5) Sim worlds (USD, ~2.2 GB), tmux configs, env setup, QGroundControl.
+!world
+!tmux
+!env
+!QGroundControl.AppImage
+
+# 6) Keep the build files themselves in context.
+!Dockerfile
+!.dockerignore

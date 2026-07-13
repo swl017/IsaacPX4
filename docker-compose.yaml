@@ -44,26 +44,26 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /etc/localtime:/etc/localtime:ro
       # --- Isaac Sim caches: persist shader/asset compilation between runs so
-      #     startup is fast after the first launch (named volumes, auto-created) ---
-      - simstack-cache-kit:/isaac-sim/kit/cache
-      - simstack-cache-ov:/root/.cache/ov
-      - simstack-cache-pip:/root/.cache/pip
-      - simstack-cache-gl:/root/.cache/nvidia/GLCache
-      - simstack-cache-compute:/root/.nv/ComputeCache
-      - simstack-logs:/root/.nvidia-omniverse/logs
-      - simstack-data:/root/.local/share/ov/data
-      - simstack-docs:/root/Documents
+      #     startup is fast after the first launch. Local bind mounts under
+      #     ${HOME}/docker/isaac-sim (visible/portable on the host); run-simstack.sh
+      #     creates them. The kit/cache (~300 MB+) is the shader/PSO cache that
+      #     makes the slow first launch a one-time cost. Change the base path here
+      #     if you want the cache elsewhere. ---
+      - ${HOME}/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache
+      - ${HOME}/docker/isaac-sim/cache/ov:/root/.cache/ov
+      - ${HOME}/docker/isaac-sim/cache/pip:/root/.cache/pip
+      - ${HOME}/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache
+      - ${HOME}/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache
+      - ${HOME}/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs
+      - ${HOME}/docker/isaac-sim/data:/root/.local/share/ov/data
+      - ${HOME}/docker/isaac-sim/documents:/root/Documents
+      # The mas stack
+      - ${HOME}/mas:/home/usrg/mas
 
       # --- OPTIONAL: Isaac asset pack (the 29 GB we excluded from the image) ---
       #   If your worlds reference a local asset root, extract the assets on the
       #   host and bind-mount them here, then point Isaac's asset root at it.
       # - /path/to/extracted/isaac-sim-assets:/root/isaac-sim-assets:ro
-
-      # --- OPTIONAL: the `mas` ROS2 stack, built inside the container ----------
-      #   Its build deps (OpenCV/Boost/GStreamer/tf2/... ) are baked into the image.
-      #   Build with:  colcon build --packages-skip ultralytics_ros
-      #   (ultralytics_ros needs pcl/rviz2 — blocked by the base's libbrotli pin.)
-      # - /home/usrg/source/mas:/home/usrg/mas
 
       # --- OPTIONAL: live-edit code from the host without rebuilding the image ---
       #   Uncomment to shadow the baked-in copies with your working tree.
@@ -72,13 +72,3 @@ services:
 
       # --- OPTIONAL: persist sim/train outputs back to the host ---
       # - ./outputs:/home/usrg/IsaacPX4/outputs
-
-volumes:
-  simstack-cache-kit:
-  simstack-cache-ov:
-  simstack-cache-pip:
-  simstack-cache-gl:
-  simstack-cache-compute:
-  simstack-logs:
-  simstack-data:
-  simstack-docs:
