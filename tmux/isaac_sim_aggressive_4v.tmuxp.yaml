@@ -1,0 +1,36 @@
+# RAL ticket 021 coop_2obs — 4-VEHICLE variant of isaac_sim_aggressive.tmuxp.yaml.
+# px4_4 = second flown observer (same iris_gimbal3 camera+gimbal factory).
+# NUM_VEHICLES is read by px4_multi_world_iris_gimbal3.isaac.py (default 3);
+# the gimbal stabilizer gets the matching 4-vehicle config.
+session_name: isaac_sim
+
+environment:
+  ROS2_HUMBLE_INSTALL_PATH: ${HOME}/ros2_humble/install # humble
+  ROS2_PX4_INSTALL_PATH: ${HOME}/IsaacPX4/ros2_ws/install # humble
+  ISAAC_PX4_HOME: ${HOME}/IsaacPX4
+  NUM_VEHICLES: '4'
+
+options:
+  default-command: /bin/bash
+
+windows:
+- window_name: simulator
+  focus: true
+  layout: tiled
+  panes:
+    # Isaac Sim + PegasusSimulator (auto-launches PX4 SITL instances)
+    - source ${ISAAC_PX4_HOME}/env/isaac_humble.sh; NUM_VEHICLES=${NUM_VEHICLES} ISAACSIM_PYTHON ${ISAAC_PX4_HOME}/PegasusSimulator/launch/px4_multi_world_iris_gimbal3.isaac.py --headless
+    - micro-xrce-dds-agent udp4 -p 8888
+
+- window_name: ros2
+  focus: false
+  layout: tiled
+  panes:
+    # Gimbal stabilizer — simulates the real gimbal's onboard controller (4-vehicle config)
+    - sleep 5; source ${ROS2_HUMBLE_INSTALL_PATH}/setup.bash; source ${ROS2_PX4_INSTALL_PATH}/setup.bash; ros2 launch gimbal_stabilizer multi_agent_los_rate_aggressive.launch.py config_file:=config/vehicles_4.yaml
+
+- window_name: util
+  focus: false
+  layout: tiled
+  panes:
+    - cd ${ISAAC_PX4_HOME}; ./QGroundControl.AppImage
